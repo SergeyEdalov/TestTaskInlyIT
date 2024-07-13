@@ -8,29 +8,44 @@ public class HealthPickModule : MonoBehaviour, ICharacterModule
     public void SetCharacter(Character character)
     {
         _character = character;
+        _character.OnInteract += HandleInteract;
     }
 
     public void UpdateModule()
     {
         if (Input.GetKeyDown(KeyCode.E) && _currentInteractiveObject != null)
-        {
-            if (_currentInteractiveObject is HealthObject)
-            {
-                _currentInteractiveObject.Interact(_character);
-                _currentInteractiveObject = null;
-            }
-        }
+            _character.Interact();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<HealthObject>() != null)
-            _currentInteractiveObject = other.GetComponent<HealthObject>();
+        InteractiveObject interactiveObject = other.GetComponent<InteractiveObject>();
+
+        if (interactiveObject != null && interactiveObject is HealthObject)
+        {
+            _currentInteractiveObject = interactiveObject;
+            _character.InteractUI(interactiveObject);
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.GetComponent<HealthObject>() != null && _currentInteractiveObject == other.GetComponent<HealthObject>())
+        InteractiveObject interactiveObject = other.GetComponent<InteractiveObject>();
+
+        if (interactiveObject != null && interactiveObject == _currentInteractiveObject)
+        {
             _currentInteractiveObject = null;
+            _character.InteractUI(null);
+        }
+    }
+
+    private void HandleInteract(InteractiveObject interactiveObject)
+    {
+        if (_currentInteractiveObject != null && _currentInteractiveObject is HealthObject)
+        {
+            _currentInteractiveObject.Interact(_character);
+            _currentInteractiveObject = null;
+            _character.InteractUI(null);
+        }
     }
 }

@@ -3,29 +3,20 @@ using UnityEngine.UI;
 
 public class InteractionUI : MonoBehaviour
 {
-    [SerializeField] public Text interactionText;
-    private CharacterFacade characterFacade;
+    [SerializeField] public Text _interactionText;
+    private CharacterFacade _characterFacade;
+    private bool _canInteract = false;
     void Start()
     {
-        interactionText.text = "";
-        characterFacade = FindObjectOfType<CharacterFacade>();
+        _interactionText.text = "";
+        _characterFacade = FindObjectOfType<CharacterFacade>();
+        _characterFacade._character.OnInteractUI += HandleInteractUI;
     }
 
-    void Update()
+    private void HandleInteractUI(InteractiveObject interactiveObject)
     {
-        Collider[] hitColliders = Physics.OverlapSphere(characterFacade.transform.position, 2f);
-        bool canInteract = false;
-
-        foreach (var hitCollider in hitColliders)
-        {
-            if (hitCollider.CompareTag("HealthPickup") || hitCollider.CompareTag("DamageObject"))
-            {
-                canInteract = true;
-                break;
-            }
-        }
-
-        if (canInteract) interactionText.text = "Нажмите E для взаимодействия";
-        else interactionText.text = "";
+        if (interactiveObject is not null)
+            _interactionText.text = "Нажмите E для взаимодействия";
+        else _interactionText.text = "";
     }
 }

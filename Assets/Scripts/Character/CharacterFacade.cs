@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterFacade : MonoBehaviour
 {
-    private Character _character;
+    public Character _character;
     private List<ICharacterModule> _modules = new List<ICharacterModule>();
 
     void Start()
@@ -29,8 +30,6 @@ public class CharacterFacade : MonoBehaviour
     void Update()
     {
         foreach (var module in _modules)
-        {
             module.UpdateModule();
-        }
     }
 }

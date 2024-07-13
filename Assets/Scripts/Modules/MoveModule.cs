@@ -10,14 +10,19 @@ public class MoveModule : MonoBehaviour, ICharacterModule
     public void SetCharacter(Character character)
     {
         _character = character;
+        _character.OnMove += MoveHandle;
     }
 
     public void UpdateModule()
     {
         float moveHorizontal = Input.GetAxis(Horizontal);
         float moveVertical = Input.GetAxis(Vertical);
-
         Vector3 direction = new Vector3(moveHorizontal, 0.0f, moveVertical);
-        _character.Move(direction, _speed);
+        
+        if (direction.magnitude > 0)
+            _character.Move(direction);
     }
+
+    private void MoveHandle(Vector3 direction) =>
+        _character._transform.Translate(direction * _speed * Time.deltaTime);
 }
